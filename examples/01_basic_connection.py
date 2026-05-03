@@ -5,7 +5,7 @@ Příklad 1: Základní připojení a listování zpráv
 
 import os
 from pathlib import Path
-from datovka import DatovkaClient
+from datovka import Datovka
 
 from dotenv import load_dotenv
 
@@ -24,7 +24,7 @@ def main():
         return
     
     # Inicializace
-    client = DatovkaClient(username, password, test_env=True)
+    client = Datovka(username, password, test_env=True)
     
     # Připojení
     if not client.connect():

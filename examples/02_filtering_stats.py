@@ -6,7 +6,7 @@ Příklad 2: Filtrování a statistika zpráv
 import os
 from pathlib import Path
 from datetime import datetime
-from datovka import DatovkaClient, DatovkaMessage, DatovkaMessageFilter, DatovkaStatistics
+from datovka import Datovka, Message, MessageFilter, Statistics
 from dotenv import load_dotenv
 
 def main():
@@ -24,7 +24,7 @@ def main():
         return
     
     # Připojení
-    client = DatovkaClient(username, password, test_env=True)
+    client = Datovka(username, password, test_env=True)
     if not client.connect() or not client.authenticate():
         return
     
@@ -36,9 +36,9 @@ def main():
         print("Žádné zprávy")
         return
     
-    # Konverze na DatovkaMessage objekty
+    # Konverze na Message objekty
     messages = [
-        DatovkaMessage(
+        Message(
             message_id=msg['message_id'],
             sender=msg['sender'],
             subject=msg['subject'],
@@ -56,14 +56,14 @@ def main():
     print("=" * 60)
     
     # Nepřečtené
-    unread = DatovkaMessageFilter.unread_only(messages)
+    unread = MessageFilter.unread_only(messages)
     print(f"\nNepřečtené zprávy: {len(unread)}")
     for msg in unread[:3]:
         print(f"  - {msg.subject}")
     
     # Statistika
     print("\n" + "=" * 60)
-    DatovkaStatistics.print_summary(messages)
+    Statistics.print_summary(messages)
 
 if __name__ == "__main__":
     main()

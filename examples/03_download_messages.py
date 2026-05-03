@@ -4,7 +4,7 @@ Příklad 3: Stažení zpráv
 """
 
 import os
-from datovka import DatovkaClient
+from datovka import Datovka
 
 def main():
     username = os.environ.get('DATOVKA_USERNAME')
@@ -15,7 +15,7 @@ def main():
         return
     
     # Připojení
-    client = DatovkaClient(username, password, test_env=True)
+    client = Datovka(username, password, test_env=True)
     if not client.connect() or not client.authenticate():
         return
     

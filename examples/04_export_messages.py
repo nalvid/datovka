@@ -4,7 +4,7 @@ Příklad 4: Export zpráv do různých formátů
 """
 
 import os
-from datovka import DatovkaClient, DatovkaMessage, DatovkaExporter
+from datovka import Datovka, Message, Exporter
 from datetime import datetime
 
 def main():
@@ -16,7 +16,7 @@ def main():
         return
     
     # Připojení
-    client = DatovkaClient(username, password, test_env=True)
+    client = Datovka(username, password, test_env=True)
     if not client.connect() or not client.authenticate():
         return
     
@@ -30,7 +30,7 @@ def main():
     
     # Konverze
     messages = [
-        DatovkaMessage(
+        Message(
             message_id=msg['message_id'],
             sender=msg['sender'],
             subject=msg['subject'],
@@ -46,9 +46,9 @@ def main():
     # Export
     print(f"\nExport {len(messages)} zpráv...\n")
     
-    DatovkaExporter.to_csv(messages, "exports/zpravy.csv")
-    DatovkaExporter.to_json(messages, "exports/zpravy.json")
-    DatovkaExporter.to_html(messages, "exports/zpravy.html")
+    Exporter.to_csv(messages, "exports/zpravy.csv")
+    Exporter.to_json(messages, "exports/zpravy.json")
+    Exporter.to_html(messages, "exports/zpravy.html")
     
     print("\nExport dokončen!")
 

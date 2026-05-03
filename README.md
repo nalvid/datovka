@@ -102,9 +102,9 @@ Pro práci se ZFO musí být v systému dostupný `openssl`.
 ## Použití jako knihovna
 
 ```python
-from datovka import DatovkaClient
+from datovka import Datovka
 
-client = DatovkaClient("username", "password", test_env=False)
+client = Datovka("username", "password", test_env=False)
 
 if client.connect() and client.authenticate():
     info = client.get_databox_info()

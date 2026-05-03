@@ -3,19 +3,21 @@
 Test script pro ověření správné funkčnosti Datovka API
 """
 
+import importlib.util
 import sys
-import os
-sys.path.insert(0, os.path.dirname(__file__))
+from pathlib import Path
 
-from datovka import DatovkaMessage, DatovkaMessageFilter, DatovkaStatistics
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from datovka import Message, MessageFilter, Statistics
 
 def test_datovka_message():
-    """Test DatovkaMessage třídy"""
+    """Test třídy Message"""
     print("=" * 60)
-    print("TEST: DatovkaMessage")
+    print("TEST: Message")
     print("=" * 60)
     
-    msg = DatovkaMessage(
+    msg = Message(
         message_id="001",
         sender="TEST_SENDER",
         subject="Test message",
@@ -24,7 +26,7 @@ def test_datovka_message():
     
     assert msg.message_id == "001"
     assert not msg.read
-    print("OK: DatovkaMessage")
+    print("OK: Message")
     
     # Test konverze na dict
     d = msg.to_dict()
@@ -41,27 +43,27 @@ def test_datovka_message():
 def test_message_filter():
     """Test filtrů"""
     print("=" * 60)
-    print("TEST: DatovkaMessageFilter")
+    print("TEST: MessageFilter")
     print("=" * 60)
     
     messages = [
-        DatovkaMessage(message_id="1", sender="A", subject="Test 1", read=False),
-        DatovkaMessage(message_id="2", sender="B", subject="Test 2", read=True),
-        DatovkaMessage(message_id="3", sender="A", subject="Info", read=False),
+        Message(message_id="1", sender="A", subject="Test 1", read=False),
+        Message(message_id="2", sender="B", subject="Test 2", read=True),
+        Message(message_id="3", sender="A", subject="Info", read=False),
     ]
     
     # Test unread_only
-    unread = DatovkaMessageFilter.unread_only(messages)
+    unread = MessageFilter.unread_only(messages)
     assert len(unread) == 2
     print("OK: unread_only()")
     
     # Test by_sender
-    from_a = DatovkaMessageFilter.by_sender(messages, "A")
+    from_a = MessageFilter.by_sender(messages, "A")
     assert len(from_a) == 2
     print("OK: by_sender()")
     
     # Test by_subject
-    test_msgs = DatovkaMessageFilter.by_subject(messages, "Test")
+    test_msgs = MessageFilter.by_subject(messages, "Test")
     assert len(test_msgs) == 2
     print("OK: by_subject()")
     
@@ -70,35 +72,35 @@ def test_message_filter():
 def test_statistics():
     """Test statistik"""
     print("=" * 60)
-    print("TEST: DatovkaStatistics")
+    print("TEST: Statistics")
     print("=" * 60)
     
     messages = [
-        DatovkaMessage(message_id="1", sender="A", subject="Test 1", read=False, size=100),
-        DatovkaMessage(message_id="2", sender="B", subject="Test 2", read=True, size=200),
-        DatovkaMessage(message_id="3", sender="A", subject="Info", read=False, size=150),
+        Message(message_id="1", sender="A", subject="Test 1", read=False, size=100),
+        Message(message_id="2", sender="B", subject="Test 2", read=True, size=200),
+        Message(message_id="3", sender="A", subject="Info", read=False, size=150),
     ]
     
     # Test count
-    total = DatovkaStatistics.count_total(messages)
+    total = Statistics.count_total(messages)
     assert total == 3
     print("OK: count_total()")
     
-    unread = DatovkaStatistics.count_unread(messages)
+    unread = Statistics.count_unread(messages)
     assert unread == 2
     print("OK: count_unread()")
     
-    read = DatovkaStatistics.count_read(messages)
+    read = Statistics.count_read(messages)
     assert read == 1
     print("OK: count_read()")
     
     # Test total size
-    size = DatovkaStatistics.total_size(messages)
+    size = Statistics.total_size(messages)
     assert size == 450
     print("OK: total_size()")
     
     # Test senders list
-    senders = DatovkaStatistics.senders_list(messages)
+    senders = Statistics.senders_list(messages)
     assert senders["A"] == 2
     assert senders["B"] == 1
     print("OK: senders_list()")
@@ -110,32 +112,23 @@ def test_dependencies():
     print("=" * 60)
     print("TEST: Závislosti")
     print("=" * 60)
-    
-    try:
-        import zeep
+
+    if importlib.util.find_spec("zeep") is not None:
         print("OK: zeep")
-    except ImportError:
+    else:
         print("ERROR: zeep - CHYBI")
         print("  Instalace: pip install zeep")
-    
-    try:
-        import dateutil
+
+    if importlib.util.find_spec("dateutil") is not None:
         print("OK: python-dateutil")
-    except ImportError:
+    else:
         print("WARN: python-dateutil - (volitelna)")
-    
-    try:
-        import lxml
+
+    if importlib.util.find_spec("lxml") is not None:
         print("OK: lxml")
-    except ImportError:
+    else:
         print("WARN: lxml - (volitelna)")
-    
-    try:
-        import requests
-        print("OK: requests")
-    except ImportError:
-        print("WARN: requests - (volitelna)")
-    
+
     print()
 
 def main():
